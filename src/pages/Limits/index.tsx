@@ -1,24 +1,17 @@
-import React, { useEffect, useContext, useState } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { ThemeContext } from 'styled-components'
 import styled from 'styled-components'
 import { Wrapper } from 'pages/Loan/styleds'
 import CardHeader from '../../components/CardHeader'
-import {
-  useMachineInformation,
-  useGetClientLimits,
-  useClientLimits,
-  useGetClientLevelUpUrl,
-  useLevelUpUrl
-} from 'state/user/hooks'
+import { useMachineInformation, useGetClientLimits, useClientLimits } from 'state/user/hooks'
 import AppBody from '../AppBody'
 import { TYPE } from '../../theme'
 import { ButtonPrimary, ButtonGray } from '../../components/Button'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { Check, X } from 'react-feather'
 import { CurrentBTMContainer } from 'pages/Loan'
 import CurrentBTMLocation from 'components/CurrentBTMLocation'
 import ReactGA from 'react-ga'
-import LevelUpModal from 'components/LevelUpModal'
 
 const StepContainer = styled.div`
   margin-top: 10px;
@@ -50,22 +43,12 @@ export default function Limits() {
   const levelUp = clientLimits?.level_up
   const hasLimit = userLimit > 0
   const highestRequirements = levelUp?.[levelUp.length - 1] || undefined
-  const getLevelUpUrl = useGetClientLevelUpUrl()
-  const levelUpUrl = useLevelUpUrl()
-  const [isModalOpen, updateIsModalOpen] = useState<boolean>(false)
-
-  const handleModal = (setting: boolean) => {
-    updateIsModalOpen(setting)
-  }
+  const history = useHistory()
 
   useEffect(() => {
     const handleGetClientLimits = async () => {
       machineInformation && (await getClientLimits(machineInformation?.operator_id, machineInformation?.machine_id))
     }
-    const handleGetLevelUpUrl = async () => {
-      await getLevelUpUrl()
-    }
-    handleGetLevelUpUrl()
     handleGetClientLimits()
   }, [])
 
@@ -125,17 +108,15 @@ export default function Limits() {
               </ButtonPrimary>
             </Link>
           )}
-          <IncreaseLimitsButton borderRadius="0" style={{ marginTop: 10 }} onClick={() => handleModal(true)}>
+          <IncreaseLimitsButton
+            borderRadius="0"
+            style={{ marginTop: 10 }}
+            onClick={() => history.push('/user/limits/increase')}
+          >
             Increase Limits
           </IncreaseLimitsButton>
         </Wrapper>
       </AppBody>
-      <LevelUpModal
-        levelUpUrl={levelUpUrl ?? ''}
-        userLimit={userLimit}
-        isOpen={isModalOpen}
-        onDismiss={(setting: boolean) => handleModal(setting)}
-      />
       <CurrentBTMContainer>
         <CurrentBTMLocation />
       </CurrentBTMContainer>

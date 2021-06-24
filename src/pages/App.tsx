@@ -13,6 +13,7 @@ import LocationPicker from './LocationPicker'
 import VerifyPhone from './VerifyPhone'
 import HowItWorks from './HowItWorks'
 import Limits from './Limits'
+import LevelUp from './LevelUp'
 import Footer from 'components/Footer'
 
 const AppWrapper = styled.div`
@@ -74,6 +75,7 @@ export default function App() {
               <Route exact strict path="/user/borrow" component={Loan} />
               <Route exact strict path="/user/locations" component={LocationPicker} />
               <Route exact strict path="/user/limits" component={Limits} />
+              <Route exact strict path="/user/limits/increase" component={LevelUp} />
             </Switch>
           </Web3ReactManager>
           <Marginer />

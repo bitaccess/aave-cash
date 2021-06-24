@@ -56,20 +56,28 @@ export function useGetClientLimits(): (
   )
 }
 
+export function useMachineInformation(): MachineInformation | undefined {
+  const machineInformation = useSelector<AppState, AppState['user']['machineInformation']>(
+    state => state.user.machineInformation
+  )
+  return machineInformation
+}
+
 export function useGetClientLevelUpUrl(): () => Promise<string | undefined> {
   const dispatch = useDispatch()
   const accessToken = useAccessToken()
   const handleUnathorizedError = useHandleUnauthorizedError()
+  const machineInformation = useMachineInformation()
   return useCallback(async () => {
     try {
-      const res = await getClientLevelUpUrl(accessToken ?? '')
+      const res = await getClientLevelUpUrl(machineInformation?.machine_id ?? '', accessToken ?? '')
       dispatch(updateLevelUpUrl({ levelUpUrl: res }))
       return res
     } catch (err) {
       handleUnathorizedError(err)
       return
     }
-  }, [accessToken, dispatch, handleUnathorizedError])
+  }, [accessToken, dispatch, handleUnathorizedError, machineInformation?.machine_id])
 }
 
 export function useLevelUpUrl(): string | undefined {
@@ -145,13 +153,6 @@ export function useClientIsAuthenticated(): () => Promise<boolean> {
       return false
     }
   }, [accessToken])
-}
-
-export function useMachineInformation(): MachineInformation | undefined {
-  const machineInformation = useSelector<AppState, AppState['user']['machineInformation']>(
-    state => state.user.machineInformation
-  )
-  return machineInformation
 }
 
 export function useRequestPhoneVerification(): (phoneNumber: string) => Promise<void> {

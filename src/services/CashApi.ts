@@ -179,13 +179,16 @@ export const getClientLimits = async (
   return result
 }
 
-export const getClientLevelUpUrl = async (accessToken: string): Promise<string> => {
-  const { result } = await authedRequest(`${CASH_API_URL}/client/limits/level-up-url`, {
-    method: 'GET',
-    headers: {
-      'client-access-token': accessToken
+export const getClientLevelUpUrl = async (machineId: string, accessToken: string): Promise<string> => {
+  const { result } = await authedRequest(
+    `${CASH_API_URL}/client/limits/level-up-url?machine_id=${machineId}&for_iframe=true`,
+    {
+      method: 'GET',
+      headers: {
+        'client-access-token': accessToken
+      }
     }
-  })
+  )
   return result
 }
 
