@@ -1,6 +1,6 @@
 {
   "name": "aave-cash",
-  "description": "Take out a cash loan using your crypto as collateral.",
+  "description": "Take out a cash loan using your crypto as collateral",
   "homepage": "./",
   "private": false,
   "devDependencies": {
