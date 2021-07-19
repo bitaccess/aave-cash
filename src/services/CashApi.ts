@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { authedRequest } from './fetch'
-import { ClientLimits, MachineInformation } from 'state/user/actions'
-import { BTMLocation } from 'pages/LocationPicker/types'
+import { ClientLimits } from 'state/user/actions'
+import { MachineInformation } from 'state/user/types'
 import { CASH_API_URL } from '../constants'
 
 export interface SellParams {
@@ -95,7 +95,7 @@ export const changeOperator = async (
   return result
 }
 
-export const searchLocations = async (query: object): Promise<BTMLocation[]> => {
+export const searchLocations = async (query: object): Promise<MachineInformation[]> => {
   const { result } = await authedRequest(`${CASH_API_URL}/location`, {
     method: 'GET',
     qs: {

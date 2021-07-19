@@ -11,7 +11,6 @@ import {
   changeOperator,
   getClientLevelUpUrl
 } from '../../services/CashApi'
-import { BTMLocation } from 'pages/LocationPicker/types'
 import useToast from '../../services/toast'
 import { useHandleUnauthorizedError } from 'state/application/hooks'
 import { AppDispatch, AppState } from '../index'
@@ -22,11 +21,11 @@ import {
   updateUserAfterVerification,
   updateSelectedBTM,
   updateMachineInformation,
-  MachineInformation,
   ClientLimits,
   updateClientLimits,
   updateLevelUpUrl
 } from './actions'
+import { MachineInformation } from 'state/user/types'
 
 export function useAccessToken(): string | undefined {
   const accessToken = useSelector<AppState, AppState['user']['accessToken']>(state => state.user.accessToken)
@@ -56,6 +55,11 @@ export function useGetClientLimits(): (
   )
 }
 
+export function useSelectedBTM(): MachineInformation | undefined {
+  const selectedBTM = useSelector<AppState, AppState['user']['selectedBTM']>(state => state.user.selectedBTM)
+  return selectedBTM
+}
+
 export function useMachineInformation(): MachineInformation | undefined {
   const machineInformation = useSelector<AppState, AppState['user']['machineInformation']>(
     state => state.user.machineInformation
@@ -67,17 +71,17 @@ export function useGetClientLevelUpUrl(): () => Promise<string | undefined> {
   const dispatch = useDispatch()
   const accessToken = useAccessToken()
   const handleUnathorizedError = useHandleUnauthorizedError()
-  const machineInformation = useMachineInformation()
+  const selectedBTM = useSelectedBTM()
   return useCallback(async () => {
     try {
-      const res = await getClientLevelUpUrl(machineInformation?.machine_id ?? '', accessToken ?? '')
+      const res = await getClientLevelUpUrl(selectedBTM?.machine_id ?? '', accessToken ?? '')
       dispatch(updateLevelUpUrl({ levelUpUrl: res }))
       return res
     } catch (err) {
       handleUnathorizedError(err)
       return
     }
-  }, [accessToken, dispatch, handleUnathorizedError, machineInformation?.machine_id])
+  }, [accessToken, dispatch, handleUnathorizedError, selectedBTM?.machine_id])
 }
 
 export function useLevelUpUrl(): string | undefined {
@@ -127,7 +131,7 @@ export function useDoesBTMLocationSupportSelling(): (machineId: string) => Promi
   )
 }
 
-export function useSearchBTMLocations(): (query: object) => Promise<BTMLocation[] | undefined> {
+export function useSearchBTMLocations(): (query: object) => Promise<MachineInformation[] | undefined> {
   const handleUnathorizedError = useHandleUnauthorizedError()
   return useCallback(
     async (query: object) => {
@@ -160,11 +164,11 @@ export function useRequestPhoneVerification(): (phoneNumber: string) => Promise<
   const history = useHistory()
   const handleUnathorizedError = useHandleUnauthorizedError()
   const toast = useToast()
-  const machineInformation = useMachineInformation()
+  const selectedBTM = useSelectedBTM()
   return useCallback(
     async (phoneNumber: string) => {
       try {
-        const res = await sendVerificationCode(phoneNumber, machineInformation?.operator_id ?? '')
+        const res = await sendVerificationCode(phoneNumber, selectedBTM?.operator_id ?? '')
         dispatch(updatePhoneVerification({ phoneNumber: res.code_sent_to, key: res.key }))
         history.push('/user/sign-in/verify')
         toast('success', 'Successfully sent verification code.')
@@ -173,7 +177,7 @@ export function useRequestPhoneVerification(): (phoneNumber: string) => Promise<
         toast('error', 'Unable to send verification code. Please try again.')
       }
     },
-    [dispatch, handleUnathorizedError, history, machineInformation?.operator_id, toast]
+    [dispatch, handleUnathorizedError, history, selectedBTM?.operator_id, toast]
   )
 }
 
@@ -211,14 +215,14 @@ export function useVerifyPhoneNumber(): (verificationCode: string) => void {
   const toast = useToast()
   const phoneNumber = useSelector<AppState, AppState['user']['phoneNumber']>(state => state.user.phoneNumber)
   const key = useSelector<AppState, AppState['user']['key']>(state => state.user.key)
-  const machineInformation = useMachineInformation()
+  const selectedBTM = useSelectedBTM()
   const handleRouteLimitsOrBorrow = useHandleRouteLimitsOrBorrow()
   return useCallback(
     async (verificationCode: string) => {
-      const operatorId = machineInformation?.operator_id ?? ''
-      const machineId = machineInformation?.machine_id ?? ''
+      const operatorId = selectedBTM?.operator_id ?? ''
+      const machineId = selectedBTM?.machine_id ?? ''
       try {
-        const res = await verifyPhoneNumber(phoneNumber, key, verificationCode, machineInformation?.operator_id ?? '')
+        const res = await verifyPhoneNumber(phoneNumber, key, verificationCode, selectedBTM?.operator_id ?? '')
         dispatch(updateUserAfterVerification({ clientId: res.client_id, token: res.token }))
         await handleRouteLimitsOrBorrow(operatorId, machineId, res.token)
         toast('success', 'Successfully verified your phone number.')
@@ -226,15 +230,7 @@ export function useVerifyPhoneNumber(): (verificationCode: string) => void {
         toast('error', JSON.stringify(err.error.message) || 'Unable to verify code. Please try again.')
       }
     },
-    [
-      machineInformation?.operator_id,
-      machineInformation?.machine_id,
-      phoneNumber,
-      key,
-      dispatch,
-      handleRouteLimitsOrBorrow,
-      toast
-    ]
+    [selectedBTM?.operator_id, selectedBTM?.machine_id, phoneNumber, key, dispatch, handleRouteLimitsOrBorrow, toast]
   )
 }
 
@@ -254,34 +250,25 @@ export function useChangeOperator(): (operatorId: string, machineId: string) => 
   )
 }
 
-export function useSelectBTM(): (btm: BTMLocation | undefined, operatorId: string) => void {
+export function useSelectBTM(): (btm: MachineInformation | undefined) => void {
   const dispatch = useDispatch()
   const history = useHistory()
   const toast = useToast()
   const clientIsAuthenticated = useClientIsAuthenticated()
   const changeOperator = useChangeOperator()
   return useCallback(
-    async (btm: BTMLocation | undefined, operatorId: string) => {
-      try {
-        dispatch(updateSelectedBTM({ selectedBTM: btm }))
-        const isClientAuthenticated = await clientIsAuthenticated()
-        if (isClientAuthenticated) {
-          await changeOperator(operatorId, btm?.machineName ?? '')
-        } else {
-          toast('success', 'BTM location successfully selected.')
-          history.push('/user/sign-in')
-        }
-      } catch (err) {
-        toast('error', 'There was an error selecting this location. Please try again.')
+    async (btm: MachineInformation | undefined) => {
+      dispatch(updateSelectedBTM({ selectedBTM: btm }))
+      const isClientAuthenticated = await clientIsAuthenticated()
+      if (isClientAuthenticated) {
+        await changeOperator(btm?.operator_id ?? '', btm?.machine_id ?? '')
+      } else {
+        toast('success', 'BTM location successfully selected.')
+        history.push('/user/sign-in')
       }
     },
     [changeOperator, clientIsAuthenticated, dispatch, history, toast]
   )
-}
-
-export function useSelectedBTM(): BTMLocation | undefined {
-  const selectedBTM = useSelector<AppState, AppState['user']['selectedBTM']>(state => state.user.selectedBTM)
-  return selectedBTM
 }
 
 export function useIsDarkMode(): boolean {

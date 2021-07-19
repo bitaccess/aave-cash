@@ -11,7 +11,7 @@ import {
   useAvailableToBorrowInUSD,
   useIsUSDCBalanceAboveBorrowAmount
 } from 'state/loan/hooks'
-import { useMachineInformation } from 'state/user/hooks'
+import { useSelectedBTM } from 'state/user/hooks'
 import { ButtonLightGreen } from 'components/Button'
 import useTheme from '../../hooks/useTheme'
 
@@ -46,7 +46,7 @@ export default function CurrentLoanCard({
   const canSkipDepositStep = useCanSkipDepositStep()
   const collateralInUSD = useCollateralInUSD()
   const availableToBorrowInUSD = useAvailableToBorrowInUSD()
-  const machineInformation = useMachineInformation()
+  const machineInformation = useSelectedBTM()
   const usdcBalanceAboveBorrowAmount = useIsUSDCBalanceAboveBorrowAmount()
 
   return (

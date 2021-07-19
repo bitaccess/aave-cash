@@ -144,6 +144,7 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@react-google-maps/api": "^2.2.0",
     "@uniswap/default-token-list": "^2.0.0"
   },
   "version": "0.0.0"

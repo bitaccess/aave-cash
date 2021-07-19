@@ -1,6 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { updateVersion } from '../global/actions'
-import { BTMLocation } from '../../pages/LocationPicker/types'
 import {
   updateMatchesDarkMode,
   updateUserDarkMode,
@@ -8,12 +7,13 @@ import {
   updatePhoneVerification,
   updateUserAfterVerification,
   updateSelectedBTM,
-  MachineInformation,
   updateMachineInformation,
   updateClientLimits,
   updateLevelUpUrl,
   ClientLimits
 } from './actions'
+
+import { MachineInformation } from './types'
 
 const currentTimestamp = () => new Date().getTime()
 
@@ -25,7 +25,7 @@ export interface UserState {
   matchesDarkMode: boolean // whether the dark mode media query matches
 
   userExpertMode: boolean
-  selectedBTM: BTMLocation | undefined
+  selectedBTM: MachineInformation | undefined
 
   clientLimits: ClientLimits | undefined
 

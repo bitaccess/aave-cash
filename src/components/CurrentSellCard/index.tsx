@@ -46,7 +46,7 @@ export default function CurrentLoanCard({ style }: { style?: object }) {
               <span style={{ position: 'relative', top: 2 }}>
                 <QuestionHelper
                   text={
-                    'The deposit to the BTM address must be received before this date and time. Please set gas levels accordingly.'
+                    'The deposit to the BTM address must be received within this 15 minute window. Please set gas levels accordingly.'
                   }
                 />
               </span>

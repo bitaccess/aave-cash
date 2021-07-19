@@ -41,10 +41,10 @@ export default function CurrentBTMLocation({
       <TYPE.subHeader style={{ marginBottom: 10 }}>Selected BTM Location</TYPE.subHeader>
       <div>
         <ActiveLocation />
-        <strong>{currentBTM?.locationName}</strong>
+        <strong>{currentBTM?.name}</strong>
       </div>
       <div>
-        <small>{currentBTM?.formattedAddress}</small>
+        <small>{currentBTM?.formatted_address}</small>
       </div>
       {canChangeLocation && (
         <div style={{ marginTop: 3 }}>

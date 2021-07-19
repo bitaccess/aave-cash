@@ -4,7 +4,7 @@ import { useHistory } from 'react-router'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from './actions'
-import { useClientIsAuthenticated, useMachineInformation } from 'state/user/hooks'
+import { useClientIsAuthenticated, useSelectedBTM } from 'state/user/hooks'
 import useToast from '../../services/toast'
 import { Keyable } from 'components/AaveAccountCard'
 
@@ -32,7 +32,7 @@ export function useRedirectToHomeIfNotConnected(): void {
 export function useHandleUnauthorizedError(): (error: Keyable) => void {
   const history = useHistory()
   const toast = useToast()
-  const machineInformation = useMachineInformation()
+  const machineInformation = useSelectedBTM()
   return useCallback(
     (error: Keyable) => {
       if (error.statusCode === 401) {

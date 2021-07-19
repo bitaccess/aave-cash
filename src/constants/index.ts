@@ -35,6 +35,8 @@ export const MINIMUM_LOAN_AMOUNT: number = process.env.REACT_APP_MINIMUM_LOAN_AM
 
 export const CASH_API_URL = process.env.REACT_APP_CASH_API_URL
 
+export const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_PLACES_API_KEY
+
 export const MAP_IFRAME_URL = process.env.REACT_APP_MAP_IFRAME_URL
 
 export const SHOW_TEST_BTM_LOCATIONS = process.env.REACT_APP_SHOW_TEST_BTM_LOCATIONS || 'show'

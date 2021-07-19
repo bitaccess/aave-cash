@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { useAllReservesTokens, useReserveData } from 'state/aave/hooks'
 import { TYPE } from 'theme'
 import Loader from 'components/Loader'
-import { useMachineInformation } from 'state/user/hooks'
+import { useSelectedBTM } from 'state/user/hooks'
 import { useCurrentLoan, useIsUSDCBalanceAboveBorrowAmount } from 'state/loan/hooks'
 import { raytoPercent, convertDateString } from 'utils'
 import useTheme from '../../hooks/useTheme'
@@ -50,7 +50,7 @@ export default function CurrentLoanCard({
   const reservesList = useAllReservesTokens()
   const receiveReserveAsset = reservesList.find(i => i.indexOf(currentLoan?.receiveCurrency?.symbol) >= 0)
   const reserveData: Keyable = useReserveData(receiveReserveAsset?.tokenAddress)
-  const machineInformation = useMachineInformation()
+  const machineInformation = useSelectedBTM()
   const usdcBalanceAboveBorrowAmount = useIsUSDCBalanceAboveBorrowAmount()
 
   return (

@@ -1,6 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
-import { Keyable } from 'components/AaveAccountCard'
-import { BTMLocation } from '../../pages/LocationPicker/types'
+import { MachineInformation } from './types'
 
 export interface SerializedToken {
   chainId: number
@@ -13,29 +12,6 @@ export interface SerializedToken {
 export interface SerializedPair {
   token0: SerializedToken
   token1: SerializedToken
-}
-
-export interface MachineInformation {
-  machine_id: string
-  operator_id: string
-  client_id: string
-  phone_number: string
-  primary_currency: string
-  supported_cryptocurrencies: string[]
-  limit: string
-  open_transaction: string
-  is_sell_available: boolean
-  prices_sell: Keyable
-  prices_sell_affiliate: Keyable
-  is_accepting_promo_codes: boolean
-  machine_status: {
-    is_sell_available: boolean
-    is_scheduled_open: boolean
-    is_temporarily_closed: boolean
-    is_buy_available: boolean
-    is_verify_available: boolean
-  }
-  terms: object[]
 }
 
 export interface LevelUpLimits {
@@ -75,7 +51,7 @@ export const updatePhoneVerification = createAction<{ phoneNumber: string; key: 
 export const updateUserAfterVerification = createAction<{ clientId: string; token: string }>(
   'user/updateUserAfterVerification'
 )
-export const updateSelectedBTM = createAction<{ selectedBTM: BTMLocation | undefined }>('user/updateSelectedBTM')
+export const updateSelectedBTM = createAction<{ selectedBTM: MachineInformation | undefined }>('user/updateSelectedBTM')
 export const updateMachineInformation = createAction<{ machineInformation: MachineInformation | undefined }>(
   'user/updateMachineInformation'
 )

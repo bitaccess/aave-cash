@@ -3,7 +3,7 @@ import { ThemeContext } from 'styled-components'
 import styled from 'styled-components'
 import { Wrapper } from 'pages/Loan/styleds'
 import CardHeader from '../../components/CardHeader'
-import { useMachineInformation, useGetClientLimits, useClientLimits } from 'state/user/hooks'
+import { useSelectedBTM, useGetClientLimits, useClientLimits } from 'state/user/hooks'
 import AppBody from '../AppBody'
 import { TYPE } from '../../theme'
 import { ButtonPrimary, ButtonGray } from '../../components/Button'
@@ -37,7 +37,7 @@ const IconContainer = styled.div`
 export default function Limits() {
   const theme = useContext(ThemeContext)
   const getClientLimits = useGetClientLimits()
-  const machineInformation = useMachineInformation()
+  const machineInformation = useSelectedBTM()
   const clientLimits = useClientLimits()
   const userLimit = clientLimits?.sell_current_adjusted || 0
   const levelUp = clientLimits?.level_up

@@ -1,7 +1,6 @@
 import React from 'react'
 import TextInput from 'components/TextInput'
 import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete'
-import { GoogleLocation } from 'pages/LocationPicker/types'
 import styled from 'styled-components'
 import useOnclickOutside from 'react-cool-onclickoutside'
 
@@ -23,7 +22,7 @@ export const ListItem = styled.p<{
   selected?: boolean
 }>`
   margin: 0px;
-  background-color: ${({ selected, theme }) => (selected ? theme.bg2 : theme.bg1)}
+  background-color: ${({ selected, theme }) => (selected ? theme.bg2 : theme.bg1)};
   padding: 10px 5px;
   cursor: pointer;
   &:hover {
@@ -52,7 +51,7 @@ export const GeoInput = React.memo(function InnerInput({
   label,
   ...rest
 }: {
-  onSelectLocation: (geoValues: GoogleLocation) => void
+  onSelectLocation: (geoValues: { location: { lat: number; lng: number }; viewport: any }) => void
   label?: string
   fontSize?: string
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
@@ -81,13 +80,13 @@ export const GeoInput = React.memo(function InnerInput({
     setValue(description, false)
     clearSuggestions()
     getGeocode({ address: description })
-      .then(results => getLatLng(results[0]))
-      .then(({ lat, lng }) => {
+      .then(results => {
+        return results[0]
+      })
+      .then(async (result: any) => {
         onSelectLocation({
-          location: {
-            lat,
-            lng
-          }
+          location: await getLatLng(result),
+          viewport: result.geometry.viewport
         })
       })
       .catch(error => {

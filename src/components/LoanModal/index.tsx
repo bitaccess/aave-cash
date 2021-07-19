@@ -21,7 +21,7 @@ import { useActiveWeb3React } from 'hooks'
 import { toBigNumber } from 'utils/BigNumber'
 import { useDepositAsset, useGetLendingPoolAddress, useBorrowAsset, useSendUSDC } from 'state/aave/hooks'
 import Loader from 'components/Loader'
-import { useMachineInformation } from 'state/user/hooks'
+import { useSelectedBTM } from 'state/user/hooks'
 import {
   useAvailableToBorrowInUSD,
   useIsCollateralAmountAboveMaxDeposit,
@@ -110,7 +110,7 @@ export default function LoanModal({
   const history = useHistory()
   const cancelTx = useCancelSellTx()
   const currentSellTx = useCurrentSellTx()
-  const machineInformation = useMachineInformation()
+  const machineInformation = useSelectedBTM()
   const availableBorrowAmountUSD = useAvailableToBorrowInUSD()
   const updateLoanStateCurrentStep = useUpdateCurrentStep()
   const createSellTransaction = useCreateSellTransaction()
