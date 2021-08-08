@@ -49,7 +49,7 @@ export const InfoWindowTitle = styled.h2`
 
 export const InfoWindowContent = styled.div`
   font-size: 14px;
-  padding: 0px 10px 0px 10px;
+  padding: 0px 10px 10px 10px;
 `
 
 export const InfoWindowAddress = styled.p`

@@ -294,7 +294,9 @@ export default function Loan() {
         borrowAmount: roundUpToMultiple(borrowPlusCushion, 1).toString(),
         receiveTokenAddress: DEFAULT_RECEIVE_ADDRESS,
         depositTokenAddress: collateralToken.address,
-        currentStep: 0
+        currentStep: 0,
+        skippedBorrow: false,
+        skippedDeposit: false
       })
       ReactGA.event({
         category: 'Loan',

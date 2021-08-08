@@ -129,3 +129,14 @@ export function secondsToTime(secs: number): { hours: string; minutes: string; s
   }
   return timeObj
 }
+
+export function calcDistance(coor1: any, coor2: any) {
+  const x = coor2.coordinates.latitude - coor1.coordinates.latitude
+  const y = coor2.coordinates.longitude - coor1.coordinates.longitude
+  return Math.sqrt(x * x + y * y)
+}
+
+export function sortBTMLocationsByDistance(coordinates: any, point: any) {
+  const sorter = (a: any, b: any) => calcDistance(a, point) - calcDistance(b, point)
+  return coordinates.sort(sorter)
+}

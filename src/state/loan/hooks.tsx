@@ -4,7 +4,7 @@ import { LoanState } from './reducer'
 import { Currency, CurrencyAmount, JSBI, Token, TokenAmount } from '@uniswap/sdk'
 import useToast from '../../services/toast'
 import { parseUnits } from '@ethersproject/units'
-import { addLoan, updateCurrentStep, addSellTransaction } from './actions'
+import { addLoan, updateCurrentStep, addSellTransaction, updateSkippedDeposit, updateSkippedBorrow } from './actions'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 import { useActiveWeb3React } from '../../hooks'
 import { toBigNumber } from 'utils/BigNumber'
@@ -138,6 +138,20 @@ export function useUpdateCurrentStep(): (currentStep: number) => void {
     },
     [dispatch]
   )
+}
+
+export function useUpdateSkipDeposit(): () => void {
+  const dispatch = useDispatch()
+  return useCallback(async () => {
+    dispatch(updateSkippedDeposit(true))
+  }, [dispatch])
+}
+
+export function useUpdateSkipBorrow(): () => void {
+  const dispatch = useDispatch()
+  return useCallback(async () => {
+    dispatch(updateSkippedBorrow(true))
+  }, [dispatch])
 }
 
 export function useCurrentLoan(): LoanState | undefined {

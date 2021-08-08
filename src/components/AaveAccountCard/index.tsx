@@ -9,7 +9,8 @@ import {
   useCanSkipDepositStep,
   useCollateralInUSD,
   useAvailableToBorrowInUSD,
-  useIsUSDCBalanceAboveBorrowAmount
+  useIsUSDCBalanceAboveBorrowAmount,
+  useUpdateSkipDeposit
 } from 'state/loan/hooks'
 import { useSelectedBTM } from 'state/user/hooks'
 import { ButtonLightGreen } from 'components/Button'
@@ -48,6 +49,7 @@ export default function CurrentLoanCard({
   const availableToBorrowInUSD = useAvailableToBorrowInUSD()
   const machineInformation = useSelectedBTM()
   const usdcBalanceAboveBorrowAmount = useIsUSDCBalanceAboveBorrowAmount()
+  const updateSkipDeposit = useUpdateSkipDeposit()
 
   return (
     <Container>
@@ -74,7 +76,10 @@ export default function CurrentLoanCard({
               <ButtonLightGreen
                 style={{ marginTop: 10, marginBottom: 5 }}
                 padding="10px"
-                onClick={onHandleSkipDepositStep}
+                onClick={() => {
+                  updateSkipDeposit()
+                  onHandleSkipDepositStep && onHandleSkipDepositStep()
+                }}
               >
                 Skip Deposit Step
               </ButtonLightGreen>

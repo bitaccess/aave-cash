@@ -5,6 +5,7 @@ import { CheckCircle } from 'react-feather'
 import { ListItem } from '../GeoInput'
 import Loader from '../Loader'
 import { TYPE } from '../../theme'
+import { sortBTMLocationsByDistance } from 'utils'
 import { customMapStyles, darkModeCustomMapStyles } from './constants'
 import { CASH_API_URL } from 'constants/index'
 import MarkerIcon from '../../assets/images/bitaccess-marker.png'
@@ -19,7 +20,6 @@ import {
   LocationsContainer,
   LocationsWrapper,
   containerStyle,
-  SelectButton,
   SelectButtonContainer,
   SidebarContainer,
   MapComponentContainer
@@ -111,20 +111,11 @@ function Map({
   }, [extraQueryString, setIsLoadingLocations])
 
   const fetchNearbyLocations = useCallback(
-    async (lat: number, lng: number) => {
-      setIsLoadingLocations(true)
-      try {
-        const response = await window
-          .fetch(`${CASH_API_URL}/location?near=${lat.toFixed(4)},${lng.toFixed(4)}&${extraQueryString ?? ''}`)
-          .then(r => r.json())
-        setSidebarLocations(response.result)
-        setIsLoadingLocations(false)
-      } catch (err) {
-        console.error(err)
-        setIsLoadingLocations(false)
-      }
+    async (latitude: number, longitude: number) => {
+      const sortedLocations = [...locations]
+      setSidebarLocations(sortBTMLocationsByDistance(sortedLocations, { coordinates: { latitude, longitude } }))
     },
-    [extraQueryString, setIsLoadingLocations]
+    [locations]
   )
 
   const onLoad = useCallback(map => {
@@ -154,15 +145,18 @@ function Map({
     onSelect(location, true)
   }, [])
 
-  const handleGeoInputSelection = (geoValues: any) => {
-    if (geoValues.location) {
-      const { lat, lng } = parseMapCoordinates(geoValues.location)
-      fetchNearbyLocations(lat, lng)
-      map.setCenter(new window.google.maps.LatLng(lat, lng))
-      map.fitBounds(geoValues.viewport)
-      setMap(map)
-    }
-  }
+  const handleGeoInputSelection = useCallback(
+    (geoValues: any) => {
+      if (geoValues.location) {
+        const { lat, lng } = geoValues.location
+        fetchNearbyLocations(lat, lng)
+        map.setCenter(new window.google.maps.LatLng(lat, lng))
+        map.setZoom(7)
+        setMap(map)
+      }
+    },
+    [fetchNearbyLocations, map]
+  )
 
   const handleDragEnd = useCallback(() => {
     if (!showSidebar) return
@@ -230,13 +224,11 @@ function Map({
                       <InfoWindowContent>
                         <InfoWindowAddress>{l.formatted_address}</InfoWindowAddress>
                         <SelectButtonContainer>
-                          <SelectButton
-                            id={`select-${l.name}`}
-                            selected={selectedLocation ? l.machine_id === selectedLocation.machine_id : false}
-                            onClick={() => onSelect(l, true)}
-                          >
-                            {selectedLocation && l.machine_id === selectedLocation.machine_id ? 'SELECTED' : 'SELECT'}
-                          </SelectButton>
+                          <TYPE.subHeader>
+                            {selectedLocation && l.machine_id === selectedLocation.machine_id
+                              ? '[selected]'
+                              : '[click marker to select]'}
+                          </TYPE.subHeader>
                         </SelectButtonContainer>
                       </InfoWindowContent>
                     </>

@@ -6,7 +6,12 @@ import { useAllReservesTokens, useReserveData } from 'state/aave/hooks'
 import { TYPE } from 'theme'
 import Loader from 'components/Loader'
 import { useSelectedBTM } from 'state/user/hooks'
-import { useCurrentLoan, useIsUSDCBalanceAboveBorrowAmount } from 'state/loan/hooks'
+import {
+  useCurrentLoan,
+  useIsUSDCBalanceAboveBorrowAmount,
+  useUpdateSkipDeposit,
+  useUpdateSkipBorrow
+} from 'state/loan/hooks'
 import { raytoPercent, convertDateString } from 'utils'
 import useTheme from '../../hooks/useTheme'
 import { ButtonLightGreen } from 'components/Button'
@@ -52,6 +57,8 @@ export default function CurrentLoanCard({
   const reserveData: Keyable = useReserveData(receiveReserveAsset?.tokenAddress)
   const machineInformation = useSelectedBTM()
   const usdcBalanceAboveBorrowAmount = useIsUSDCBalanceAboveBorrowAmount()
+  const updateSkipDeposit = useUpdateSkipDeposit()
+  const updateSkipBorrow = useUpdateSkipBorrow()
 
   return (
     <Container style={style}>
@@ -63,13 +70,21 @@ export default function CurrentLoanCard({
           <RowBetween>
             <UserInfoRow>Deposit:</UserInfoRow>
             <UserInfoRow>
-              {currentLoan?.depositAmount} {currentLoan?.depositCurrency?.symbol}
+              {!currentLoan?.skippedDeposit ? (
+                `${currentLoan?.depositAmount} ${currentLoan?.depositCurrency?.symbol}`
+              ) : (
+                <i>Skipped</i>
+              )}
             </UserInfoRow>
           </RowBetween>
           <RowBetween>
             <UserInfoRow>Borrow:</UserInfoRow>
             <UserInfoRow>
-              {currentLoan?.borrowAmount} {currentLoan?.receiveCurrency?.symbol}
+              {!currentLoan?.skippedBorrow ? (
+                `${currentLoan?.borrowAmount} ${currentLoan?.receiveCurrency?.symbol}`
+              ) : (
+                <i>Skipped</i>
+              )}
             </UserInfoRow>
           </RowBetween>
           <RowBetween>
@@ -112,7 +127,11 @@ export default function CurrentLoanCard({
               <ButtonLightGreen
                 style={{ marginTop: 10, marginBottom: 5 }}
                 padding="10px"
-                onClick={onHandleSkipBorrowStep}
+                onClick={() => {
+                  if (currentStep === 0) updateSkipDeposit()
+                  updateSkipBorrow()
+                  onHandleSkipBorrowStep && onHandleSkipBorrowStep()
+                }}
                 disabled={isLoading}
               >
                 {isLoading ? (
